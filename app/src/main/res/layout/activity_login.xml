@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="#F5F5F5">
+
+    <!-- App title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="💬 ChatApp"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chat with a random stranger!"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- Email field -->
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/input_background"
+        android:padding="14dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="#1A1A2E"
+        android:textColorHint="#AAAAAA"/>
+
+    <!-- Password field -->
+    <EditText
+        android:id="@+id/passwordInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:background="@drawable/input_background"
+        android:padding="14dp"
+        android:layout_marginBottom="24dp"
+        android:textColor="#1A1A2E"
+        android:textColorHint="#AAAAAA"/>
+
+    <!-- Login button -->
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOGIN"
+        android:backgroundTint="#4A90D9"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:padding="14dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Loading spinner -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Go to register -->
+    <TextView
+        android:id="@+id/goToRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't have an account? Register here"
+        android:textColor="#4A90D9"
+        android:padding="8dp"/>
+
+</LinearLayout>
