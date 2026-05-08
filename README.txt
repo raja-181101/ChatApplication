@@ -18,11 +18,11 @@ A real-time Android chat application that connects users anonymously for private
 
 ## App Showcase
 
-![Showcase](https://raw.githubusercontent.com/raja-181101/ChatApplication/main/screenshots/Showcase.png)
+![Chat App Showcase showing login, matchmaking and real-time chat](screenshots/Showcase.png)
 
 ## Demo
 
-![Demo](https://raw.githubusercontent.com/raja-181101/ChatApplication/main/screenshots/ShowcaseDemo.gif)
+![Demo](screenshots/ShowcaseDemo.gif)
 
 ---
 
