@@ -18,10 +18,7 @@ A real-time Android chat application that connects users anonymously for private
 
 ## App Showcase
 
-```
 ![Chat App Showcase showing login, matchmaking and real-time chat](screenshots/Showcase.png)
-
-```
 
 ## Demo 
 
