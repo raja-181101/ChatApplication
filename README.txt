@@ -18,11 +18,11 @@ A real-time Android chat application that connects users anonymously for private
 
 ## App Showcase
 
-![Chat App Showcase showing login, matchmaking and real-time chat](screenshots/Showcase.png)
+![Showcase](https://raw.githubusercontent.com/raja-181101/ChatApplication/main/screenshots/Showcase.png)
 
-## Demo 
+## Demo
 
-![Demo](screenshots/ShowcaseDemo.gif)
+![Demo](https://raw.githubusercontent.com/raja-181101/ChatApplication/main/screenshots/ShowcaseDemo.gif)
 
 ---
 
@@ -73,9 +73,8 @@ A real-time Android chat application that connects users anonymously for private
 1. Click Android icon in Firebase console
 2. Enter package name:
 
-   ```
    com.example.chatapp
-   ```
+
 3. Download `google-services.json`
 4. Place it inside the `/app` folder
 
