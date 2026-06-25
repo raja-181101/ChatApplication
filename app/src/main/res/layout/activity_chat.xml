@@ -33,6 +33,17 @@
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:padding="8dp"/>
+        <Button
+            android:id="@+id/ReportButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Report"
+            android:backgroundTint="#E74C3C"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:layout_margin="8px"
+            android:padding="8dp"/>
+
     </LinearLayout>
 
     <!-- Messages list -->

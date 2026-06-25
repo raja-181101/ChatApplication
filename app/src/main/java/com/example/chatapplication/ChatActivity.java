@@ -25,7 +25,7 @@ public class ChatActivity extends AppCompatActivity {
     // UI elements
     private RecyclerView recyclerView;
     private EditText messageInput;
-    private Button sendButton, leaveButton;
+    private Button sendButton, leaveButton,reportButton;
 
     // Firebase
     private DatabaseReference chatRoomRef;
