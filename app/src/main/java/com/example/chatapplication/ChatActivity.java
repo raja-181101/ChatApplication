@@ -61,6 +61,7 @@ public class ChatActivity extends AppCompatActivity {
         messageInput  = findViewById(R.id.messageInput);
         sendButton    = findViewById(R.id.sendButton);
         leaveButton   = findViewById(R.id.leaveButton);
+        reportButton = findViewById(R.id.ReportButton);
 
         // Setup RecyclerView
         messageList = new ArrayList<>();
@@ -71,12 +72,30 @@ public class ChatActivity extends AppCompatActivity {
         // Button clicks
         sendButton.setOnClickListener(v -> sendMessage());
         leaveButton.setOnClickListener(v -> confirmLeave());
+        reportButton.setOnClickListener(v->reportUser());
 
         // Start listening for messages
         listenForMessages();
 
         // Listen if the other user leaves (chat room gets deleted)
         listenForChatRoomDeletion();
+
+    }
+
+    private void reportUser() {
+        String[] reasons = {
+                "Spam",
+                "Harassment",
+                "Abusive Language",
+                "Sexual Content",
+                "Other"
+        };
+        new AlertDialog.Builder(this).setTitle("Report")
+                .setItems(reasons,(dialog,which)->{
+                    String selectedReason = reasons[which];
+                    System.out.println("Selected Reason:  "+selectedReason+" ------------------------>");
+                    Toast.makeText(this, "Selected Reason:"+selectedReason, Toast.LENGTH_SHORT).show();
+                }).show();
     }
 
     // Listen for new messages in real time
