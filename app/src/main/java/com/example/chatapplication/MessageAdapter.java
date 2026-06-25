@@ -58,8 +58,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.messageText.setText(message.getText());
 
         // For received messages, also show who sent it
-        if (holder.senderText != null) {
-            holder.senderText.setText(message.getSender());
+        if (holder.senderText != null ) {
+            if(message.getSender().equals(currentUserId)){
+                holder.senderText.setText("You");
+            }else {
+                holder.senderText.setText("Stranger");
+            }
+
         }
     }
 

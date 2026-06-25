@@ -96,6 +96,8 @@ public class ChatActivity extends AppCompatActivity {
                     System.out.println("Selected Reason:  "+selectedReason+" ------------------------>");
                     Toast.makeText(this, "Selected Reason:"+selectedReason, Toast.LENGTH_SHORT).show();
                 }).show();
+
+
     }
 
     // Listen for new messages in real time
