@@ -3,6 +3,7 @@ package com.example.chatapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,7 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -40,6 +43,7 @@ public class ChatActivity extends AppCompatActivity {
     // User info passed from MatchmakingActivity
     private String chatRoomId;
     private String currentUserId;
+    private String strangerUserId;
 //    private String currentUserEmail;
 
     @Override
@@ -83,6 +87,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void reportUser() {
+        findStrangerUserId();
+
         String[] reasons = {
                 "Spam",
                 "Harassment",
@@ -94,10 +100,80 @@ public class ChatActivity extends AppCompatActivity {
                 .setItems(reasons,(dialog,which)->{
                     String selectedReason = reasons[which];
                     System.out.println("Selected Reason:  "+selectedReason+" ------------------------>");
+                    checkAndReportUser(strangerUserId,selectedReason);
                     Toast.makeText(this, "Selected Reason:"+selectedReason, Toast.LENGTH_SHORT).show();
                 }).show();
 
 
+    }
+
+    private void checkAndReportUser(String strangerUserId, String selectedReason) {
+        DatabaseReference reportsRef = FirebaseDatabase.getInstance()
+                .getReference("reports")
+                .child(strangerUserId);
+
+        reportsRef.get().addOnSuccessListener(snapshot->{
+           boolean alreadyReported = false;
+           for (DataSnapshot report:snapshot.getChildren()){
+               String reportedBy = report.child("reportedBy").getValue(String.class);
+               if(reportedBy != null && reportedBy.equals(currentUserId)){
+                 alreadyReported = true;
+                 break;
+               }
+           }
+           if (alreadyReported){
+               Toast.makeText(this, "already Reported To This User: ", Toast.LENGTH_SHORT).show();
+               return;
+           }
+           saveReport(strangerUserId,selectedReason);
+           checkAndBanUser(strangerUserId);
+        });
+    }
+
+    private void checkAndBanUser(String strangerUserId) {
+        DatabaseReference reportsRef = FirebaseDatabase.getInstance()
+                .getReference("reports")
+                .child(strangerUserId);
+        reportsRef.get().addOnSuccessListener(snapshot -> {
+           long totalNum = snapshot.getChildrenCount();
+           if(totalNum >= 3){
+               FirebaseDatabase.getInstance()
+                       .getReference("bannedUsers")
+                       .child(strangerUserId)
+                       .setValue(true);
+               Log.d("BAN",strangerUserId+"Banned");
+           }
+        });
+    }
+
+    private void saveReport(String strangerUserId, String selectedReason) {
+        DatabaseReference reportRef = FirebaseDatabase.getInstance()
+                .getReference("reports")
+                .child(strangerUserId)
+                .push();
+        Map<String,Object> reportData = new HashMap<>();
+        reportData.put("reportedBy",currentUserId);
+        reportData.put("reportedReason",selectedReason);
+        reportData.put("ReportedAt",System.currentTimeMillis());
+        reportRef.setValue(reportData).addOnSuccessListener(unused -> {
+            Toast.makeText(this, "Reported Successfully ", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void findStrangerUserId() {
+        chatRoomRef.child("users").get().addOnSuccessListener(snapshot ->{
+            String user1 = snapshot.child("user1").getValue(String.class);
+            String user2 = snapshot.child("user2").getValue(String.class);
+
+
+            if(user1 != null && user1.equals(currentUserId)){
+                strangerUserId = user2;
+            }else {
+                strangerUserId = user1;
+            }
+            Log.d("Report","Stranger ID: "+strangerUserId);
+
+        });
     }
 
     // Listen for new messages in real time
