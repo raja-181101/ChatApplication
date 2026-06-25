@@ -16,18 +16,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private static final int VIEW_TYPE_RECEIVED = 2;
 
     private List<Message> messageList;
-    private String        currentUserEmail; // So we know which messages are "mine"
+    private String currentUserId; // So we know which messages are "mine"
 
-    public MessageAdapter(List<Message> messageList, String currentUserEmail) {
+    public MessageAdapter(List<Message> messageList, String currentUserId) {
         this.messageList      = messageList;
-        this.currentUserEmail = currentUserEmail;
+        this.currentUserId = currentUserId;
     }
 
     // Decide which layout to use based on who sent the message
     @Override
     public int getItemViewType(int position) {
         Message message = messageList.get(position);
-        if (message.getSender().equals(currentUserEmail)) {
+        if (message.getSender().equals(currentUserId)) {
             return VIEW_TYPE_SENT;     // My message
         } else {
             return VIEW_TYPE_RECEIVED; // Other person's message

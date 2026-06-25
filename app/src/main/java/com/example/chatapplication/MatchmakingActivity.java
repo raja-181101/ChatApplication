@@ -8,9 +8,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,19 +19,22 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import Authentication_Advanced.LoginActivity;
+
 public class MatchmakingActivity extends AppCompatActivity {
 
-    private Button findChatButton, logoutButton;
+    private Button logoutButton;
+    private Button findChatButton;
     private ProgressBar progressBar;
     private TextView statusText;
 
     private FirebaseAuth mAuth;
     private DatabaseReference waitingRoomRef;
     private DatabaseReference chatsRef;
-    private DatabaseReference myMatchRef; // listens for when we get matched
+    private DatabaseReference myMatchRef;
 
     private String currentUserId;
-    private String currentUserEmail;
+//    private String currentUserEmail;
 
     private ValueEventListener matchListener;
     private boolean isMatched = false;
@@ -46,13 +49,13 @@ public class MatchmakingActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
         if (user == null) {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, LauncherActivity.class));
             finish();
             return;
         }
 
         currentUserId    = user.getUid();
-        currentUserEmail = user.getEmail();
+//        currentUserEmail = user.getEmail();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         waitingRoomRef = database.getReference("waiting_room");
@@ -64,7 +67,9 @@ public class MatchmakingActivity extends AppCompatActivity {
         statusText     = findViewById(R.id.statusText);
 
         findChatButton.setOnClickListener(v -> startMatchmaking());
-        logoutButton.setOnClickListener(v -> logout());
+        logoutButton.setEnabled(false);
+        logoutButton.setVisibility(View.INVISIBLE);
+//        logoutButton.setOnClickListener(v -> logout());
     }
 
     private void startMatchmaking() {
@@ -177,7 +182,8 @@ public class MatchmakingActivity extends AppCompatActivity {
         DatabaseReference myRef = waitingRoomRef.child(currentUserId);
 
         // Add to waiting room
-        myRef.setValue(currentUserEmail);
+//        myRef.setValue(currentUserEmail);
+        myRef.setValue(currentUserId);
 
         // Remove ourselves if we disconnect unexpectedly
         myRef.onDisconnect().removeValue();
@@ -223,8 +229,9 @@ public class MatchmakingActivity extends AppCompatActivity {
         Intent intent = new Intent(MatchmakingActivity.this, ChatActivity.class);
         intent.putExtra("chatRoomId", chatRoomId);
         intent.putExtra("currentUserId", currentUserId);
-        intent.putExtra("currentUserEmail", currentUserEmail);
+//        intent.putExtra("currentUserEmail", currentUserEmail);
         startActivity(intent);
+        finish();
 
         resetUI();
     }
@@ -249,13 +256,14 @@ public class MatchmakingActivity extends AppCompatActivity {
         runOnUiThread(() -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show());
     }
 
-    private void logout() {
+   /* private void logout() {
+
         waitingRoomRef.child(currentUserId).removeValue();
         removeListeners();
         mAuth.signOut();
         startActivity(new Intent(this, LoginActivity.class));
         finish();
-    }
+    }*/
 
     @Override
     protected void onStop() {

@@ -40,7 +40,7 @@ public class ChatActivity extends AppCompatActivity {
     // User info passed from MatchmakingActivity
     private String chatRoomId;
     private String currentUserId;
-    private String currentUserEmail;
+//    private String currentUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
         // Get data passed from MatchmakingActivity
         chatRoomId       = getIntent().getStringExtra("chatRoomId");
         currentUserId    = getIntent().getStringExtra("currentUserId");
-        currentUserEmail = getIntent().getStringExtra("currentUserEmail");
+//        currentUserEmail = getIntent().getStringExtra("currentUserEmail");
 
         // Firebase reference for this specific chat room
         chatsRef     = FirebaseDatabase.getInstance().getReference("chats");
@@ -64,7 +64,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // Setup RecyclerView
         messageList = new ArrayList<>();
-        adapter     = new MessageAdapter(messageList, currentUserEmail);
+        adapter     = new MessageAdapter(messageList, currentUserId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -141,7 +141,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // Create a new message entry in Firebase
         DatabaseReference newMessageRef = chatRoomRef.child("messages").push();
-        newMessageRef.child("sender").setValue(currentUserEmail);
+        newMessageRef.child("sender").setValue(currentUserId);
         newMessageRef.child("text").setValue(text);
         newMessageRef.child("timestamp").setValue(System.currentTimeMillis());
 

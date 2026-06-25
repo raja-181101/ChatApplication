@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'com.example.chatapplication'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.example.chatapplication"
-        minSdk 29
-        targetSdk 34
+        minSdk 25
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 
@@ -41,6 +41,8 @@ dependencies {
     implementation libs.material
     implementation libs.firebase.database
     implementation libs.firebase.auth
+    implementation libs.activity
+    implementation libs.constraintlayout
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
