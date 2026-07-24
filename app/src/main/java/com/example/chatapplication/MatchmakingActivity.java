@@ -24,6 +24,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import Authentication_Advanced.LoginActivity;
 
 public class MatchmakingActivity extends AppCompatActivity {
@@ -103,7 +106,7 @@ public class MatchmakingActivity extends AppCompatActivity {
             @Override
             public void onAvailable(@NonNull Network network) {
                 runOnUiThread(()->{
-                    Toast.makeText(MatchmakingActivity.this, "Network Connected", Toast.LENGTH_SHORT).show();
+
                 });
             }
 
@@ -233,11 +236,20 @@ public class MatchmakingActivity extends AppCompatActivity {
         }
 
         DatabaseReference roomRef = chatsRef.child(chatRoomId);
-        roomRef.onDisconnect().removeValue();
+        long currentTime = System.currentTimeMillis();
+
+        Map<String, Object> user1 = new HashMap<>();
+        user1.put("uid",currentUserId);
+        user1.put("lastSeen",currentTime);
+
+        Map<String, Object> user2 = new HashMap<>();
+        user2.put("uid",otherUserId);
+        user2.put("lastSeen",currentTime);
+
 
         // Write both users into the chat room
-        roomRef.child("users").child("user1").setValue(currentUserId);
-        roomRef.child("users").child("user2").setValue(otherUserId)
+        roomRef.child("users").child("user1").setValue(user1);
+        roomRef.child("users").child("user2").setValue(user2)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && isSearching) {
                         openChatRoom(chatRoomId);
@@ -271,7 +283,7 @@ public class MatchmakingActivity extends AppCompatActivity {
                 for (DataSnapshot room : snapshot.getChildren()) {
                     // Check if this room has us as a user
                     for (DataSnapshot userEntry : room.child("users").getChildren()) {
-                        if (currentUserId.equals(userEntry.getValue(String.class))) {
+                        if (currentUserId.equals(userEntry.child("uid").getValue(String.class))) {
                             // We've been matched!
                             isMatched = true;
                             isSearching = false;
@@ -327,14 +339,6 @@ public class MatchmakingActivity extends AppCompatActivity {
         runOnUiThread(() -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show());
     }
 
-   /* private void logout() {
-
-        waitingRoomRef.child(currentUserId).removeValue();
-        removeListeners();
-        mAuth.signOut();
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
-    }*/
 
     @Override
     protected void onStop() {
