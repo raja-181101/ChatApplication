@@ -2,6 +2,8 @@ package com.example.chatapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
@@ -9,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,10 +38,16 @@ public class ChatActivity extends AppCompatActivity {
     private TextView chattingStatus;
 
     // Firebase
-    private DatabaseReference chatRoomRef;
-    private DatabaseReference chatsRef;
+    private DatabaseReference chatRoomRef,strangerLastSeenRef;
+    private DatabaseReference chatsRef, lastSeenRef;
+    private DatabaseReference connectionRef,presenceRef;
+    private DatabaseReference firebasePresenceDataRef;
+
+    //EventListeners
     private ValueEventListener messageListener;
     private ValueEventListener chatRoomStatusListener;
+    private ValueEventListener connectionListener;
+    private ValueEventListener strangerPresenceListener;
 
     // Data
     private List<Message> messageList;
@@ -49,10 +58,10 @@ public class ChatActivity extends AppCompatActivity {
     private String currentUserId;
     private String strangerUserId;
     private boolean isLeaving = false;
-//    private String currentUserEmail;
+    private boolean isFirebaseConnected;
 
-    private DatabaseReference connectionRef;
-    private ValueEventListener connectionListener;
+    //HANDLERS
+    private Handler monitorHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +76,14 @@ public class ChatActivity extends AppCompatActivity {
         // Firebase reference for this specific chat room
         chatsRef     = FirebaseDatabase.getInstance().getReference("chats");
         chatRoomRef  = chatsRef.child(chatRoomId);
-        chatRoomRef.onDisconnect().removeValue();
+
+        firebasePresenceDataRef = FirebaseDatabase.getInstance().getReference("presence");
+        //setup Monitoring
+
+        presenceRef = firebasePresenceDataRef.child(currentUserId);
+        presenceRef.child("online").setValue(true);
+        presenceRef.child("online").onDisconnect().setValue(false);
+
 
         // Link UI elements
         recyclerView  = findViewById(R.id.recyclerView);
@@ -83,7 +99,13 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+
+        strangerPresenceNode();
         checkFirebaseConnection();
+
+
+
+
 
         // Button clicks
         sendButton.setOnClickListener(v -> sendMessage());
@@ -96,7 +118,17 @@ public class ChatActivity extends AppCompatActivity {
         // Listen if the other user leaves (chat room gets deleted)
         listenForChatRoomDeletion();
 
+        getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                confirmLeave();
+            }
+        });
+
     }
+
+
+
 
     private void checkFirebaseConnection(){
         connectionRef = FirebaseDatabase.getInstance()
@@ -106,11 +138,15 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Boolean connected = snapshot.getValue(Boolean.class);
-                if (Boolean.TRUE.equals(connected)){
+                isFirebaseConnected = Boolean.TRUE.equals(connected);
+                if (isFirebaseConnected){
                     chattingStatus.setText("Chatting With Stranger");
+
+                    //i need to update timestamp
+
                     Toast.makeText(ChatActivity.this, "Connected", Toast.LENGTH_SHORT).show();
                 }else {
-                    chattingStatus.setText("Connection Lost...Waiting for User");
+                    chattingStatus.setText("Connection Lost...Waiting for Connection");
                     Toast.makeText(ChatActivity.this, "Connection Lost...Waiting for User", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -122,11 +158,39 @@ public class ChatActivity extends AppCompatActivity {
         };
         connectionRef.addValueEventListener(connectionListener);
     }
+    private void strangerPresenceNode(){
+        chatRoomRef.child("users").get().addOnSuccessListener(snapshot ->{
+            String user1 = snapshot.child("user1").child("uid").getValue(String.class);
+            String user2 = snapshot.child("user2").child("uid").getValue(String.class);
+            strangerUserId = currentUserId.equals(user1)? user2: user1;
+            System.out.println("------------------Stranger User ID: "+strangerUserId+" --------------------");
+            strangerPresenceListener = firebasePresenceDataRef.child(strangerUserId).child("online").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Boolean online = snapshot.getValue(Boolean.class);
+                    System.out.println("----------------Stranger Presence: "+online+" --------------------");
+                    if (Boolean.TRUE.equals(online)){
+                        chattingStatus.setText("Chatting With Stranger");
+                    }else {
+                        chattingStatus.setText("Stranger Lost Connection");
+                        Toast.makeText(ChatActivity.this, "Stranger Lost Connection...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        });
+
+    }
 
     private void reportUser() {
         chatRoomRef.child("users").get().addOnSuccessListener(snapshot ->{
-            String user1 = snapshot.child("user1").getValue(String.class);
-            String user2 = snapshot.child("user2").getValue(String.class);
+            String user1 = snapshot.child("user1").child("uid").getValue(String.class);
+            String user2 = snapshot.child("user2").child("uid").getValue(String.class);
 
 
             if(user1 != null && user1.equals(currentUserId)){
@@ -252,12 +316,16 @@ public class ChatActivity extends AppCompatActivity {
         chatRoomStatusListener = chatRoomRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                if (!isFirebaseConnected){
+                    return;
+                }
                 // If chat room no longer exists, the other user left
                 if (!snapshot.exists()) {
                     Toast.makeText(ChatActivity.this,
                             "The other user has left the chat.", Toast.LENGTH_LONG).show();
                     goBackToMatchmaking();
                 }
+                Log.d("Chat_Room","exists: "+snapshot.exists()+", Connected: "+isFirebaseConnected);
             }
 
             @Override
@@ -297,15 +365,21 @@ public class ChatActivity extends AppCompatActivity {
         removeListeners();
         chatRoomRef.onDisconnect().cancel();
 
+
+
         // Delete the entire chat room from Firebase
         // This triggers the other user's deletion listener and sends them back too
-        chatRoomRef.removeValue().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                goBackToMatchmaking();
-            }else {
-                Toast.makeText(this, "Couldn't Leave Chatroom", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (isFirebaseConnected) {
+            chatRoomRef.removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    goBackToMatchmaking();
+                } else {
+                    Toast.makeText(this, "Couldn't Leave Chatroom", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else {
+            goBackToMatchmaking();
+        }
     }
 
     private void goBackToMatchmaking() {
@@ -319,6 +393,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void removeListeners() {
+
+
+        if (strangerPresenceListener!=null&&firebasePresenceDataRef!=null){
+            firebasePresenceDataRef.removeEventListener(strangerPresenceListener);
+            strangerPresenceListener = null;
+        }
         if(connectionRef!=null && connectionListener!=null){
             connectionRef.removeEventListener(connectionListener);
         }
@@ -332,12 +412,13 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         // Intercept back button — treat it as leaving the chat
-        super.onBackPressed();
         confirmLeave();
-    }
+        super.onBackPressed();
+
+    }*/
 
     @Override
     protected void onDestroy() {
