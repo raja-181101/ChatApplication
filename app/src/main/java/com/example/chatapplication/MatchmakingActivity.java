@@ -96,14 +96,6 @@ public class MatchmakingActivity extends AppCompatActivity {
             }
         });
 
-        //Logout Button for Future Use
-        /*
-        Button logoutButton = findViewById(R.id.logoutButton);
-        logoutButton.setEnabled(false);
-        logoutButton.setVisibility(View.INVISIBLE);
-        logoutButton.setOnClickListener(v -> logout());
-        */
-
     }
 
     // Network Callback for Reconnection
