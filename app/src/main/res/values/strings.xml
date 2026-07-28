@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="chatting_with_stranger">Chatting With Stranger</string>
+    <string name="user_lost_connection">Network Lost…Waiting For Connection</string>
+    <string name="stranger_lost_connection">Stranger Lost Connection</string>
 </resources>

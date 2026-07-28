@@ -2,8 +2,6 @@ package com.example.chatapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
@@ -36,13 +34,11 @@ public class ChatActivity extends AppCompatActivity {
     // UI elements
     private RecyclerView recyclerView;
     private EditText messageInput;
-    private Button sendButton, leaveButton,reportButton;
     private TextView chattingStatus;
 
     // Firebase
-    private DatabaseReference chatRoomRef,strangerLastSeenRef;
-    private DatabaseReference chatsRef, lastSeenRef;
-    private DatabaseReference connectionRef,presenceRef;
+    private DatabaseReference chatRoomRef;
+    private DatabaseReference connectionRef;
     private DatabaseReference firebasePresenceDataRef;
     private DatabaseReference strangerPresenceRef;
 
@@ -55,9 +51,6 @@ public class ChatActivity extends AppCompatActivity {
     // Data
     private List<Message> messageList;
     private MessageAdapter adapter;
-
-    // User info passed from MatchmakingActivity
-    private String chatRoomId;
     private String currentUserId;
     private String strangerUserId;
     private boolean isLeaving = false;
@@ -69,17 +62,18 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Get data passed from MatchmakingActivity
-        chatRoomId       = getIntent().getStringExtra("chatRoomId");
+        // User info passed from MatchmakingActivity
+        String chatRoomId = getIntent().getStringExtra("chatRoomId");
         currentUserId    = getIntent().getStringExtra("currentUserId");
 
         // Firebase reference for this specific chat room
-        chatsRef     = FirebaseDatabase.getInstance().getReference("chats");
+        DatabaseReference chatsRef = FirebaseDatabase.getInstance().getReference("chats");
+        assert chatRoomId != null;
         chatRoomRef  = chatsRef.child(chatRoomId);
-        firebasePresenceDataRef = FirebaseDatabase.getInstance().getReference("presence");
-        //setup Monitoring
 
-        presenceRef = firebasePresenceDataRef.child(currentUserId);
+        // Firebase reference for User Presence
+        firebasePresenceDataRef = FirebaseDatabase.getInstance().getReference("presence");
+        DatabaseReference presenceRef = firebasePresenceDataRef.child(currentUserId);
         presenceRef.child("online").setValue(true);
         presenceRef.child("online").onDisconnect().setValue(false);
 
@@ -87,9 +81,9 @@ public class ChatActivity extends AppCompatActivity {
         // Link UI elements
         recyclerView  = findViewById(R.id.recyclerView);
         messageInput  = findViewById(R.id.messageInput);
-        sendButton    = findViewById(R.id.sendButton);
-        leaveButton   = findViewById(R.id.leaveButton);
-        reportButton = findViewById(R.id.ReportButton);
+        Button sendButton = findViewById(R.id.sendButton);
+        Button leaveButton = findViewById(R.id.leaveButton);
+        Button reportButton = findViewById(R.id.ReportButton);
         chattingStatus = findViewById(R.id.chattingStatusText);
 
         // Setup RecyclerView
@@ -98,13 +92,11 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-
+        //Check For Stranger Presence
         strangerPresenceNode();
+
+        //Check For Self Connection
         checkFirebaseConnection();
-
-
-
-
 
         // Button clicks
         sendButton.setOnClickListener(v -> sendMessage());
@@ -117,6 +109,7 @@ public class ChatActivity extends AppCompatActivity {
         // Listen if the other user leaves (chat room gets deleted)
         listenForChatRoomDeletion();
 
+        //On BackPressed Event
         getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -126,9 +119,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-
-
-
+    //Check Self Connection
     private void checkFirebaseConnection(){
         connectionRef = FirebaseDatabase.getInstance()
                 .getReference(".info/connected");
@@ -139,13 +130,13 @@ public class ChatActivity extends AppCompatActivity {
                 Boolean connected = snapshot.getValue(Boolean.class);
                 isFirebaseConnected = Boolean.TRUE.equals(connected);
                 if (isFirebaseConnected){
-                    chattingStatus.setText("Chatting With Stranger");
+                    chattingStatus.setText(R.string.chatting_with_stranger);
 
                     //i need to update timestamp
 
                     Toast.makeText(ChatActivity.this, "Connected", Toast.LENGTH_SHORT).show();
                 }else {
-                    chattingStatus.setText("Connection Lost...Waiting for Connection");
+                    chattingStatus.setText(R.string.user_lost_connection);
                     Toast.makeText(ChatActivity.this, "Connection Lost...Waiting for User", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -157,6 +148,8 @@ public class ChatActivity extends AppCompatActivity {
         };
         connectionRef.addValueEventListener(connectionListener);
     }
+
+    //Check For Stranger Connection
     private void strangerPresenceNode(){
         chatRoomRef.child("users").get().addOnSuccessListener(snapshot ->{
             String user1 = snapshot.child("user1").child("uid").getValue(String.class);
@@ -170,9 +163,9 @@ public class ChatActivity extends AppCompatActivity {
                     Boolean online = snapshot.getValue(Boolean.class);
                     System.out.println("----------------Stranger Presence: "+online+" --------------------");
                     if (Boolean.TRUE.equals(online)){
-                        chattingStatus.setText("Chatting With Stranger");
+                        chattingStatus.setText(R.string.chatting_with_stranger);
                     }else {
-                        chattingStatus.setText("Stranger Lost Connection");
+                        chattingStatus.setText(R.string.stranger_lost_connection);
                         Toast.makeText(ChatActivity.this, "Stranger Lost Connection...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -187,6 +180,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    //Get Stranger UserId and Report User
     private void reportUser() {
         chatRoomRef.child("users").get().addOnSuccessListener(snapshot ->{
             String user1 = snapshot.child("user1").child("uid").getValue(String.class);
@@ -205,6 +199,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    // Check The user Reported or not
     private void checkAndReportUser(String strangerUserId, String selectedReason) {
         DatabaseReference reportsRef = FirebaseDatabase.getInstance()
                 .getReference("reports")
@@ -228,6 +223,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    //Check And Ban The User
     private void checkAndBanUser(String strangerUserId) {
         DatabaseReference reportsRef = FirebaseDatabase.getInstance()
                 .getReference("reports")
@@ -244,6 +240,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    // Save The Reports From The User
     private void saveReport(String strangerUserId, String selectedReason) {
         DatabaseReference reportRef = FirebaseDatabase.getInstance()
                 .getReference("reports")
@@ -253,11 +250,12 @@ public class ChatActivity extends AppCompatActivity {
         reportData.put("reportedBy",currentUserId);
         reportData.put("reportedReason",selectedReason);
         reportData.put("ReportedAt",System.currentTimeMillis());
-        reportRef.setValue(reportData).addOnSuccessListener(unused -> {
-            Toast.makeText(this, "Reported Successfully ", Toast.LENGTH_SHORT).show();
-        });
+        reportRef.setValue(reportData).addOnSuccessListener(unused ->
+                Toast.makeText(this, "Reported Successfully ", Toast.LENGTH_SHORT).show()
+        );
     }
 
+    //Show What to Report for the user
     private void showAlertDialog() {
         String[] reasons = {
                 "Spam",
@@ -287,8 +285,9 @@ public class ChatActivity extends AppCompatActivity {
 
                 String sender    = msgSnapshot.child("sender").getValue(String.class);
                 String text      = msgSnapshot.child("text").getValue(String.class);
-                long   timestamp = msgSnapshot.child("timestamp").getValue(long.class) != null
-                        ? msgSnapshot.child("timestamp").getValue(long.class) : 0L;
+
+                Long timeStampTemp = msgSnapshot.child("timestamp").getValue(Long.class);
+                long   timestamp = timeStampTemp != null ? timeStampTemp : 0L;
 
                 if (sender != null && text != null && !text.isEmpty()) {
                     messageList.add(new Message(sender, text, timestamp));
@@ -325,7 +324,7 @@ public class ChatActivity extends AppCompatActivity {
     private void listenForChatRoomDeletion() {
         chatRoomStatusListener = chatRoomRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isFirebaseConnected){
                     return;
                 }
@@ -339,30 +338,20 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 
     // Send a message
     private void sendMessage() {
         String text = messageInput.getText().toString().trim();
-
-        if (TextUtils.isEmpty(text)) return; // Don't send empty messages
-
-        // Create a new message entry in Firebase
+        if (TextUtils.isEmpty(text)) return;
         DatabaseReference newMessageRef = chatRoomRef.child("messages").push();
         HashMap<String,Object> data = new HashMap<>();
         data.put("sender",currentUserId);
         data.put("text",text);
         data.put("timestamp",System.currentTimeMillis());
-
         newMessageRef.setValue(data);
-
-        /*newMessageRef.child("sender").setValue(currentUserId);
-        newMessageRef.child("text").setValue(text);
-        newMessageRef.child("timestamp").setValue(System.currentTimeMillis());*/
-
-        // Clear the input field
         messageInput.setText("");
     }
 
@@ -381,10 +370,6 @@ public class ChatActivity extends AppCompatActivity {
         // Remove all listeners first
         removeListeners();
         chatRoomRef.onDisconnect().cancel();
-
-
-
-        // Delete the entire chat room from Firebase
         // This triggers the other user's deletion listener and sends them back too
         if (isFirebaseConnected) {
             chatRoomRef.removeValue().addOnCompleteListener(task -> {
@@ -399,6 +384,7 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    // Go To Matchmaking Activity
     private void goBackToMatchmaking() {
         if (isLeaving){
             return;
@@ -409,6 +395,7 @@ public class ChatActivity extends AppCompatActivity {
         finish();
     }
 
+    // Remove Listeners
     private void removeListeners()  {
 
 
@@ -429,17 +416,10 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    /*@Override
-    public void onBackPressed() {
-        // Intercept back button — treat it as leaving the chat
-        confirmLeave();
-        super.onBackPressed();
-
-    }*/
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         removeListeners();
     }
+
 }
