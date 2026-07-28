@@ -4,4 +4,9 @@
     <string name="chatting_with_stranger">Chatting With Stranger</string>
     <string name="user_lost_connection">Network Lost…Waiting For Connection</string>
     <string name="stranger_lost_connection">Stranger Lost Connection</string>
+    <string name="stop_search_btn">Stop Search</string>
+    <string name="looking_someone_txt">Looking For Someone…</string>
+    <string name="waiting_for_someone_txt">Waiting for someone to join…</string>
+    <string name="find_someone_txt">Press the button to find someone to chat with!</string>
+    <string name="start_search_btn">Find Someone</string>
 </resources>

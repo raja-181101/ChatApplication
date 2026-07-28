@@ -27,29 +27,28 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import Authentication_Advanced.LoginActivity;
 
 public class MatchmakingActivity extends AppCompatActivity {
-
-    private Button logoutButton;
+    // UI Elements
     private Button findChatButton;
     private ProgressBar progressBar;
     private TextView statusText;
 
-    private FirebaseAuth mAuth;
+    // Firebase Database Reference
     private DatabaseReference waitingRoomRef;
     private DatabaseReference chatsRef;
     private DatabaseReference myMatchRef;
     private DatabaseReference bannedUser;
 
-    private String currentUserId;
-//    private String currentUserEmail;
-
+    // Event Listeners
     private ValueEventListener matchListener;
+
+    // Data Variables
     private boolean isMatched = false;
     private boolean isSearching = false;
-    private boolean isBanned = false;
+    private String currentUserId;
 
+    //Connection Variables
     private ConnectivityManager connectivityManager;
     private ConnectivityManager.NetworkCallback networkCallback;
 
@@ -58,30 +57,32 @@ public class MatchmakingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matchmaking);
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        //Get Current User Id
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            FirebaseUser user = mAuth.getCurrentUser();
+            if (user == null) {
+                startActivity(new Intent(this, LauncherActivity.class));
+                finish();
+                return;
+            }
+            currentUserId    = user.getUid();
 
-        if (user == null) {
-            startActivity(new Intent(this, LauncherActivity.class));
-            finish();
-            return;
-        }
 
-        currentUserId    = user.getUid();
-//        currentUserEmail = user.getEmail();
+        // Get Database References
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            waitingRoomRef = database.getReference("waiting_room");
+            chatsRef = database.getReference("chats");
+            bannedUser = database.getReference("bannedUsers");
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        waitingRoomRef = database.getReference("waiting_room");
-        chatsRef       = database.getReference("chats");
-        bannedUser = database.getReference("bannedUsers");
-
+        // Link UI elements
         findChatButton = findViewById(R.id.findChatButton);
-        logoutButton   = findViewById(R.id.logoutButton);
         progressBar    = findViewById(R.id.progressBar);
         statusText     = findViewById(R.id.statusText);
 
+        // Network Callback if Connection Lost
         registerRequestCallback();
 
+        // Call Matchmaking Method
         findChatButton.setOnClickListener(v -> {
 
             if (!isSearching){
@@ -94,12 +95,18 @@ public class MatchmakingActivity extends AppCompatActivity {
                 stopMatch();
             }
         });
+
+        //Logout Button for Future Use
+        /*
+        Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setEnabled(false);
         logoutButton.setVisibility(View.INVISIBLE);
-//        logoutButton.setOnClickListener(v -> logout());
+        logoutButton.setOnClickListener(v -> logout());
+        */
 
     }
 
+    // Network Callback for Reconnection
     private void registerRequestCallback(){
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         networkCallback = new ConnectivityManager.NetworkCallback(){
@@ -123,6 +130,7 @@ public class MatchmakingActivity extends AppCompatActivity {
         connectivityManager.registerDefaultNetworkCallback(networkCallback);
     }
 
+    // Stop Matchmaking
     private void stopMatch(){
 
             isSearching = false;
@@ -132,13 +140,13 @@ public class MatchmakingActivity extends AppCompatActivity {
 
     }
 
+    // Start Matchmaking
     private void startMatchmaking() {
         bannedUser
                 .child(currentUserId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()){
-                        isBanned = true;
                         Toast.makeText(this, "You Are Banned", Toast.LENGTH_SHORT).show();
                         System.out.println("<<<----------------------You are Banned----------------->>>>");
                         return;
@@ -148,8 +156,8 @@ public class MatchmakingActivity extends AppCompatActivity {
 
 //                    findChatButton.setEnabled(false);
                     progressBar.setVisibility(View.VISIBLE);
-                    findChatButton.setText("Stop Search");
-                    statusText.setText("Looking for someone...");
+                    findChatButton.setText(R.string.stop_search_btn);
+                    statusText.setText(R.string.looking_someone_txt);
 
 
                     // First clean up any old entry for ourselves
@@ -160,11 +168,12 @@ public class MatchmakingActivity extends AppCompatActivity {
 
 
     }
+
     // Scan the waiting room and try to match using a transaction
     private void scanAndMatch() {
         waitingRoomRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!isSearching) return;
 
                 String foundUserId = null;
@@ -189,19 +198,21 @@ public class MatchmakingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 showError("Connection error. Try again.");
                 resetUI();
             }
         });
     }
+
     // Use a Firebase Transaction to atomically claim a waiting user
     private void tryClaimUser(String otherUserId) {
         DatabaseReference otherUserRef = waitingRoomRef.child(otherUserId);
 
         otherUserRef.runTransaction(new Transaction.Handler() {
+            @NonNull
             @Override
-            public Transaction.Result doTransaction(MutableData currentData) {
+            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
                 // If the user is still there, remove them (claim them)
                 if (currentData.getValue() != null) {
                     currentData.setValue(null); // Remove from waiting room
@@ -225,6 +236,7 @@ public class MatchmakingActivity extends AppCompatActivity {
             }
         });
     }
+
     // Create a chat room for the two matched users
     private void createChatRoom(String otherUserId) {
         // Consistent room ID regardless of who matched whom
@@ -259,25 +271,23 @@ public class MatchmakingActivity extends AppCompatActivity {
                     }
                 });
     }
+
     // Add ourselves to waiting room and listen for someone to match us
     private void addSelfAndWait() {
         DatabaseReference myRef = waitingRoomRef.child(currentUserId);
 
         // Add to waiting room
-//        myRef.setValue(currentUserEmail);
         myRef.setValue(currentUserId);
 
         // Remove ourselves if we disconnect unexpectedly
         myRef.onDisconnect().removeValue();
+        statusText.setText(R.string.waiting_for_someone_txt);
 
-        statusText.setText("Waiting for someone to join...");
-
-        // Listen on our specific user node in chats
         // The other user will create a chat room with our UID in it
         myMatchRef = chatsRef;
         matchListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (isMatched || !isSearching) return;
 
                 for (DataSnapshot room : snapshot.getChildren()) {
@@ -296,7 +306,7 @@ public class MatchmakingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 showError("Connection error. Try again.");
                 resetUI();
             }
@@ -305,19 +315,20 @@ public class MatchmakingActivity extends AppCompatActivity {
         chatsRef.addValueEventListener(matchListener);
     }
 
+    // Open Chatroom
     private void openChatRoom(String chatRoomId) {
         removeListeners();
 
         Intent intent = new Intent(MatchmakingActivity.this, ChatActivity.class);
         intent.putExtra("chatRoomId", chatRoomId);
         intent.putExtra("currentUserId", currentUserId);
-//        intent.putExtra("currentUserEmail", currentUserEmail);
         startActivity(intent);
         finish();
 
         resetUI();
     }
 
+    // Remove Event Listeners
     private void removeListeners() {
         if (matchListener != null && myMatchRef != null) {
             chatsRef.removeEventListener(matchListener);
@@ -325,16 +336,17 @@ public class MatchmakingActivity extends AppCompatActivity {
         }
     }
 
+    // Reset The UI
     private void resetUI() {
         isSearching = false;
         runOnUiThread(() -> {
-//            findChatButton.setEnabled(true);
             progressBar.setVisibility(View.GONE);
-            statusText.setText("Press the button to find someone to chat with!");
-            findChatButton.setText("Find Someone");
+            statusText.setText(R.string.find_someone_txt);
+            findChatButton.setText(R.string.start_search_btn);
         });
     }
 
+    // Show Error
     private void showError(String msg) {
         runOnUiThread(() -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show());
     }
