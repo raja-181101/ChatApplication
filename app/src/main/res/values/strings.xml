@@ -7,6 +7,14 @@
     <string name="stop_search_btn">Stop Search</string>
     <string name="looking_someone_txt">Looking For Someone…</string>
     <string name="waiting_for_someone_txt">Waiting for someone to join…</string>
+    <string name="type_message_hint">Type a Message…</string>
     <string name="find_someone_txt">Press the button to find someone to chat with!</string>
-    <string name="start_search_btn">Find Someone</string>
+    <string name="start_search_btn">🔍 Find Someone</string>
+    <string name="chat_logo_txt">💬</string>
+    <string name="me_txt">You</string>
+    <string name="u_txt">Stranger</string>
+    <string name="leave_btn">Leave</string>
+    <string name="report_btn">Report</string>
+    <string name="send_btn">Send</string>
+    <string name="random_chat_txt">Random Chat</string>
 </resources>

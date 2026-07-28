@@ -15,8 +15,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private static final int VIEW_TYPE_SENT     = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
 
-    private List<Message> messageList;
-    private String currentUserId; // So we know which messages are "mine"
+    private final List<Message> messageList;
+    private final String currentUserId; // So we know which messages are "mine"
 
     public MessageAdapter(List<Message> messageList, String currentUserId) {
         this.messageList      = messageList;
@@ -60,9 +60,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         // For received messages, also show who sent it
         if (holder.senderText != null ) {
             if(message.getSender().equals(currentUserId)){
-                holder.senderText.setText("You");
+                holder.senderText.setText(R.string.me_txt);
             }else {
-                holder.senderText.setText("Stranger");
+                holder.senderText.setText(R.string.u_txt);
             }
 
         }
@@ -74,7 +74,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     // ViewHolder — holds references to the views in each list item
-    static class MessageViewHolder extends RecyclerView.ViewHolder {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         TextView senderText; // Only used in received messages
 
