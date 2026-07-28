@@ -13,11 +13,13 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,9 +44,10 @@ public class ChatActivity extends AppCompatActivity {
     private DatabaseReference chatsRef, lastSeenRef;
     private DatabaseReference connectionRef,presenceRef;
     private DatabaseReference firebasePresenceDataRef;
+    private DatabaseReference strangerPresenceRef;
 
     //EventListeners
-    private ValueEventListener messageListener;
+    private ChildEventListener messageListener;
     private ValueEventListener chatRoomStatusListener;
     private ValueEventListener connectionListener;
     private ValueEventListener strangerPresenceListener;
@@ -60,8 +63,6 @@ public class ChatActivity extends AppCompatActivity {
     private boolean isLeaving = false;
     private boolean isFirebaseConnected;
 
-    //HANDLERS
-    private Handler monitorHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +72,10 @@ public class ChatActivity extends AppCompatActivity {
         // Get data passed from MatchmakingActivity
         chatRoomId       = getIntent().getStringExtra("chatRoomId");
         currentUserId    = getIntent().getStringExtra("currentUserId");
-//        currentUserEmail = getIntent().getStringExtra("currentUserEmail");
 
         // Firebase reference for this specific chat room
         chatsRef     = FirebaseDatabase.getInstance().getReference("chats");
         chatRoomRef  = chatsRef.child(chatRoomId);
-
         firebasePresenceDataRef = FirebaseDatabase.getInstance().getReference("presence");
         //setup Monitoring
 
@@ -164,7 +163,8 @@ public class ChatActivity extends AppCompatActivity {
             String user2 = snapshot.child("user2").child("uid").getValue(String.class);
             strangerUserId = currentUserId.equals(user1)? user2: user1;
             System.out.println("------------------Stranger User ID: "+strangerUserId+" --------------------");
-            strangerPresenceListener = firebasePresenceDataRef.child(strangerUserId).child("online").addValueEventListener(new ValueEventListener() {
+            strangerPresenceRef = firebasePresenceDataRef.child(strangerUserId).child("online");
+            strangerPresenceListener = strangerPresenceRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Boolean online = snapshot.getValue(Boolean.class);
@@ -277,36 +277,46 @@ public class ChatActivity extends AppCompatActivity {
 
     // Listen for new messages in real time
     private void listenForMessages() {
+
         DatabaseReference messagesRef = chatRoomRef.child("messages");
 
-        messageListener = messagesRef.addValueEventListener(new ValueEventListener() {
+
+        messageListener = messagesRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                messageList.clear();
+            public void onChildAdded(@NonNull DataSnapshot msgSnapshot, @Nullable String previousChildName) {
 
-                for (DataSnapshot msgSnapshot : snapshot.getChildren()) {
-                    // Build Message object from Firebase data
-                    String sender    = msgSnapshot.child("sender").getValue(String.class);
-                    String text      = msgSnapshot.child("text").getValue(String.class);
-                    long   timestamp = msgSnapshot.child("timestamp").getValue(long.class) != null
-                            ? msgSnapshot.child("timestamp").getValue(long.class) : 0L;
+                String sender    = msgSnapshot.child("sender").getValue(String.class);
+                String text      = msgSnapshot.child("text").getValue(String.class);
+                long   timestamp = msgSnapshot.child("timestamp").getValue(long.class) != null
+                        ? msgSnapshot.child("timestamp").getValue(long.class) : 0L;
 
-                    if (sender != null && text != null && !text.isEmpty()) {
-                        messageList.add(new Message(sender, text, timestamp));
-                    }
+                if (sender != null && text != null && !text.isEmpty()) {
+                    messageList.add(new Message(sender, text, timestamp));
+                    adapter.notifyItemInserted(messageList.size()-1);
+                    recyclerView.scrollToPosition(messageList.size()-1);
                 }
 
-                // Refresh the list and scroll to bottom
-                adapter.notifyDataSetChanged();
-                if (messageList.size() > 0) {
-                    recyclerView.scrollToPosition(messageList.size() - 1);
-                }
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                Toast.makeText(ChatActivity.this,
-                        "Failed to load messages.", Toast.LENGTH_SHORT).show();
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ChatActivity.this, "Failed To Load Message! ", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -325,7 +335,7 @@ public class ChatActivity extends AppCompatActivity {
                             "The other user has left the chat.", Toast.LENGTH_LONG).show();
                     goBackToMatchmaking();
                 }
-                Log.d("Chat_Room","exists: "+snapshot.exists()+", Connected: "+isFirebaseConnected);
+
             }
 
             @Override
@@ -341,9 +351,16 @@ public class ChatActivity extends AppCompatActivity {
 
         // Create a new message entry in Firebase
         DatabaseReference newMessageRef = chatRoomRef.child("messages").push();
-        newMessageRef.child("sender").setValue(currentUserId);
+        HashMap<String,Object> data = new HashMap<>();
+        data.put("sender",currentUserId);
+        data.put("text",text);
+        data.put("timestamp",System.currentTimeMillis());
+
+        newMessageRef.setValue(data);
+
+        /*newMessageRef.child("sender").setValue(currentUserId);
         newMessageRef.child("text").setValue(text);
-        newMessageRef.child("timestamp").setValue(System.currentTimeMillis());
+        newMessageRef.child("timestamp").setValue(System.currentTimeMillis());*/
 
         // Clear the input field
         messageInput.setText("");
@@ -392,11 +409,11 @@ public class ChatActivity extends AppCompatActivity {
         finish();
     }
 
-    private void removeListeners() {
+    private void removeListeners()  {
 
 
-        if (strangerPresenceListener!=null&&firebasePresenceDataRef!=null){
-            firebasePresenceDataRef.removeEventListener(strangerPresenceListener);
+        if (strangerPresenceListener!=null&&strangerPresenceRef!=null){
+            strangerPresenceRef.removeEventListener(strangerPresenceListener);
             strangerPresenceListener = null;
         }
         if(connectionRef!=null && connectionListener!=null){
