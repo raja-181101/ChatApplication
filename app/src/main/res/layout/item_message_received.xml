@@ -20,7 +20,8 @@
             android:id="@+id/senderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#4A90D9"
+            android:textColor="@color/text_hint"
+            android:text="@string/u_txt"
             android:textSize="11sp"
             android:textStyle="bold"
             android:layout_marginBottom="2dp"/>
@@ -30,7 +31,7 @@
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/message_received_text"
             android:textSize="15sp"/>
     </LinearLayout>
 

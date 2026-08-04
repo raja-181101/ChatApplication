@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#1A1A2E"
+        android:background="@color/background"
         android:padding="12dp"
         android:gravity="center_vertical">
 
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/chatting_with_stranger"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold"/>
 
@@ -31,10 +31,10 @@
             android:id="@+id/leaveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#E74C3C"
+            android:backgroundTint="@color/leave_button"
             android:padding="8dp"
             android:text="@string/leave_btn"
-            android:textColor="#000000"
+            android:textColor="@color/leave_button_text"
             android:textSize="12sp" />
 
         <Button
@@ -42,10 +42,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:backgroundTint="#E74C3C"
+            android:backgroundTint="@color/report_button"
             android:padding="8dp"
             android:text="@string/report_btn"
-            android:textColor="#000000"
+            android:textColor="@color/report_button_text"
             android:textSize="12sp" />
 
     </LinearLayout>
@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
+        android:background="@color/background"
         android:padding="8dp"
         android:gravity="center_vertical">
 
@@ -80,8 +80,8 @@
             android:inputType="textMultiLine"
             android:maxLines="3"
             android:padding="12dp"
-            android:textColor="#1A1A2E"
-            android:textColorHint="#757575"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/input_hint"
             tools:ignore="VisualLintTextFieldSize" />
 
         <Button
@@ -89,10 +89,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:backgroundTint="#4A90D9"
+            android:backgroundTint="@color/primary"
             android:padding="12dp"
             android:text="@string/send_btn"
-            android:textColor="#212121" />
+            android:textColor="@color/text_primary" />
     </LinearLayout>
 
 </LinearLayout>

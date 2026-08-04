@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="#1A1A2E">
+    android:background="@color/background">
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
         android:text="@string/random_chat_txt"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="8dp"/>
 
     <!-- Dynamic status message -->
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:text="@string/find_someone_txt"
         android:textSize="14sp"
-        android:textColor="#AAAACC"
+        android:textColor="@color/text_hint"
         android:gravity="center"
         android:layout_marginBottom="48dp"/>
 
@@ -40,7 +40,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:visibility="gone"
-        android:indeterminateTint="#4A90D9"
+        android:indeterminateTint="@color/primary"
         android:layout_marginBottom="24dp"/>
 
     <!-- Find chat button -->
@@ -49,8 +49,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_search_btn"
-        android:backgroundTint="#4A90D9"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/text_primary"
         android:textStyle="bold"
         android:textSize="16sp"
         android:padding="16dp"
