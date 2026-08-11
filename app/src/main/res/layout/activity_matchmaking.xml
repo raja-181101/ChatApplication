@@ -7,12 +7,13 @@
     android:padding="@dimen/large_padding"
     android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/chat_logo_txt"
-        android:textSize="@dimen/chat_bubble_logo_text"
-        android:layout_marginBottom="@dimen/small_margin"/>
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:contentDescription="@string/chat_logo_content_description"
+        android:src="@drawable/ic_chat"
+        android:scaleType="fitCenter" />
 
     <TextView
         android:layout_width="wrap_content"
