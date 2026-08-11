@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for messages received from the other user (left-aligned, grey) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -13,7 +14,8 @@
         android:orientation="vertical"
         android:background="@drawable/bubble_received"
         android:padding="10dp"
-        android:layout_marginEnd="64dp">
+        android:layout_marginEnd="64dp"
+        tools:ignore="UselessParent">
 
         <!-- Sender email -->
         <TextView

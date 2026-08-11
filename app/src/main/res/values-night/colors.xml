@@ -50,12 +50,13 @@
 
     <!--Background-->
     <color name="input_background">#2A2A2A</color>
-    <color name="input_hint">#8C8C8C</color>
+    <color name="input_hint">#979191</color>
 
     <!-- Action Buttons -->
     <color name="leave_button">#FBBF24</color>
-    <color name="leave_button_text">#FFFFFF</color>
-
+    <color name="leave_button_text">@color/black</color>
     <color name="report_button">#EF4444</color>
-    <color name="report_button_text">#FFFFFF</color>
+    <color name="report_button_text">@color/black</color>
+    <color name="send_button">#1E5BBF</color>
+    <color name="send_button_text">#FFFFFF</color>
 </resources>

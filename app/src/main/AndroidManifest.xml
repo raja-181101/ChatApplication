@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.chatapplication">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,11 +13,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ChatApplication"
+        android:theme="@style/Theme.COMRST"
         tools:targetApi="31">
 
         <activity
-            android:name=".LauncherActivity"
+            android:name="com.example.comrst.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,16 +26,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MatchmakingActivity"
+            android:name="com.example.comrst.MatchmakingActivity"
             android:exported="false" />
         <activity
-            android:name="Authentication_Advanced.RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name="Authentication_Advanced.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ChatActivity"
+            android:name="com.example.comrst.ChatActivity"
             android:exported="false" />
     </application>
 

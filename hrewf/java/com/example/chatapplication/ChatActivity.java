@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.example.comrst;
 
 import android.content.Intent;
 import android.os.Bundle;

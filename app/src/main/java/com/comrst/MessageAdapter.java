@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.comrst;
 
 import android.view.LayoutInflater;
 import android.view.View;

@@ -11,8 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chatapplication.MatchmakingActivity;
-import com.example.chatapplication.R;
+import com.example.comrst.MatchmakingActivity;
+import com.example.comrst.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

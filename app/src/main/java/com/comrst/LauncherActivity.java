@@ -1,22 +1,21 @@
-package com.example.chatapplication;
+package com.comrst;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LauncherActivity extends AppCompatActivity {
+    private static final long LOGO_ICON_ANIMATION = 900;
+    private static final long LOGO_ANIMATION = 600;
+    private static final long APP_NAME_DELAY = 700;
+    private static final long TAGLINE_DELAY = 700;
+    private static final long SPLASH_DURATION = 1200;
 
     FirebaseAuth myAuth;
     private ImageView logo;
@@ -41,19 +40,19 @@ public class LauncherActivity extends AppCompatActivity {
                 .alpha(1f)
                 .scaleX(1f)
                 .scaleY(1f)
-                .setDuration(900)
+                .setDuration(LOGO_ICON_ANIMATION)
                 .withEndAction(()->{
                     logo.animate()
                             .translationY(-30f)
-                            .setDuration(600)
+                            .setDuration(LOGO_ANIMATION)
                             .withEndAction(()->{
                                 appName.animate()
                                         .alpha(1f)
-                                        .setDuration(700)
+                                        .setDuration(APP_NAME_DELAY)
                                         .withEndAction(()->{
                                             tagName.animate()
                                                     .alpha(1f)
-                                                    .setDuration(700)
+                                                    .setDuration(TAGLINE_DELAY)
                                                     .withEndAction(()->{
                                                         tagName.postDelayed(()->{
                                                             if (myAuth.getCurrentUser()!=null){
@@ -62,7 +61,7 @@ public class LauncherActivity extends AppCompatActivity {
                                                                 signInAnonymously();
                                                             }
 
-                                                        },1200);
+                                                        },SPLASH_DURATION);
 
 
                                                     });

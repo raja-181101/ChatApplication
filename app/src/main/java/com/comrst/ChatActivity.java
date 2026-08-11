@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.comrst;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -65,6 +66,11 @@ public class ChatActivity extends AppCompatActivity {
         // User info passed from MatchmakingActivity
         String chatRoomId = getIntent().getStringExtra("chatRoomId");
         currentUserId    = getIntent().getStringExtra("currentUserId");
+
+        if (currentUserId == null && chatRoomId == null){
+            finish();
+            return;
+        }
 
         // Firebase reference for this specific chat room
         DatabaseReference chatsRef = FirebaseDatabase.getInstance().getReference("chats");
@@ -155,13 +161,12 @@ public class ChatActivity extends AppCompatActivity {
             String user1 = snapshot.child("user1").child("uid").getValue(String.class);
             String user2 = snapshot.child("user2").child("uid").getValue(String.class);
             strangerUserId = currentUserId.equals(user1)? user2: user1;
-            System.out.println("------------------Stranger User ID: "+strangerUserId+" --------------------");
+            assert strangerUserId != null;
             strangerPresenceRef = firebasePresenceDataRef.child(strangerUserId).child("online");
             strangerPresenceListener = strangerPresenceRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Boolean online = snapshot.getValue(Boolean.class);
-                    System.out.println("----------------Stranger Presence: "+online+" --------------------");
                     if (Boolean.TRUE.equals(online)){
                         chattingStatus.setText(R.string.chatting_with_stranger);
                     }else {
@@ -192,8 +197,10 @@ public class ChatActivity extends AppCompatActivity {
             }else {
                 strangerUserId = user1;
             }
-            Log.d("Report","Stranger ID: "+strangerUserId);
-            showAlertDialog();
+            if (!isFinishing() && !isDestroyed()){
+                showAlertDialog();
+            }
+
 
         });
 
@@ -350,7 +357,7 @@ public class ChatActivity extends AppCompatActivity {
         HashMap<String,Object> data = new HashMap<>();
         data.put("sender",currentUserId);
         data.put("text",text);
-        data.put("timestamp",System.currentTimeMillis());
+        data.put("timestamp", ServerValue.TIMESTAMP);
         newMessageRef.setValue(data);
         messageInput.setText("");
     }

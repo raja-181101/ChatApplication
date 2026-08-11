@@ -4,28 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
+    android:background="@color/background"
     android:layout_height="match_parent"
     tools:context=".LauncherActivity">
 
 
       <ImageView
         android:id="@+id/logo_id"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:src="@drawable/ic_comrst_icon"
+        android:layout_width="@dimen/launcher_logo_width"
+        android:layout_height="@dimen/launcher_logo_height"
+          android:contentDescription="@string/logo_description"
+          android:src="@drawable/ic_comrst_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="COMRST"
+        android:text="@string/app_name"
         android:id="@+id/app_name_id"
+        android:textColor="@color/text_primary"
         android:fontFamily="sans-serif-medium"
-        android:textSize="32sp"
+        android:textSize="@dimen/launcher_appName_text_size_large"
         android:letterSpacing="0.08"
         app:layout_constraintEnd_toEndOf="@+id/logo_id"
         app:layout_constraintStart_toStartOf="@+id/logo_id"
@@ -36,9 +38,9 @@
         android:id="@+id/tag_name_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Meet. Chat. Move On."
-        android:textColor="#64748B"
-        android:textSize="16sp"
+        android:text="@string/tag_line"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/launcher_tag_line_text_size_Medium"
         app:layout_constraintEnd_toEndOf="@+id/app_name_id"
         app:layout_constraintStart_toStartOf="@+id/app_name_id"
         app:layout_constraintTop_toBottomOf="@+id/app_name_id"

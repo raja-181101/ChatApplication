@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.comrst;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

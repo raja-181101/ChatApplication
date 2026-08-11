@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.comrst;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -140,13 +143,10 @@ public class MatchmakingActivity extends AppCompatActivity {
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()){
                         Toast.makeText(this, "You Are Banned", Toast.LENGTH_SHORT).show();
-                        System.out.println("<<<----------------------You are Banned----------------->>>>");
                         return;
                     }
                     isMatched   = false;
                     isSearching = true;
-
-//                    findChatButton.setEnabled(false);
                     progressBar.setVisibility(View.VISIBLE);
                     findChatButton.setText(R.string.stop_search_btn);
                     statusText.setText(R.string.looking_someone_txt);
@@ -223,7 +223,10 @@ public class MatchmakingActivity extends AppCompatActivity {
                     createChatRoom(otherUserId);
                 } else {
                     // Claim failed — that user was taken. Try again.
-                    scanAndMatch();
+                    if (isSearching){
+                        scanAndMatch();
+                    }
+
                 }
             }
         });
@@ -323,8 +326,9 @@ public class MatchmakingActivity extends AppCompatActivity {
     // Remove Event Listeners
     private void removeListeners() {
         if (matchListener != null && myMatchRef != null) {
-            chatsRef.removeEventListener(matchListener);
+            myMatchRef.removeEventListener(matchListener);
             matchListener = null;
+            myMatchRef = null;
         }
     }
 
@@ -356,6 +360,7 @@ public class MatchmakingActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        removeListeners();
         if (connectivityManager!=null && networkCallback!=null){
             connectivityManager.unregisterNetworkCallback(networkCallback);
         }

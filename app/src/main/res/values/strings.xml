@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ChatApp</string>
+    <string name="app_name">COMRST</string>
     <string name="chatting_with_stranger">Chatting With Stranger</string>
     <string name="user_lost_connection">Network Lost…Waiting For Connection</string>
     <string name="stranger_lost_connection">Stranger Lost Connection</string>
@@ -16,5 +16,7 @@
     <string name="leave_btn">Leave</string>
     <string name="report_btn">Report</string>
     <string name="send_btn">Send</string>
-    <string name="random_chat_txt">Random Chat</string>
+    <string name="logo_description">Main Logo</string>
+    <string name="random_chat_txt">@string/app_name</string>
+    <string name="tag_line">Random Chat</string>
 </resources>

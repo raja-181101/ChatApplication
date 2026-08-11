@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F0F0F0"
+    android:background="@color/background"
     android:fitsSystemWindows="true">
 
     <!-- Top bar -->
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/background"
-        android:padding="12dp"
+        android:padding="@dimen/extra_small_padding"
         android:gravity="center_vertical">
 
         <TextView
@@ -23,30 +23,30 @@
             android:layout_weight="1"
             android:text="@string/chatting_with_stranger"
             android:textColor="@color/text_primary"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_small"
             android:textStyle="bold"/>
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/leaveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/leave_button"
-            android:padding="8dp"
+            android:padding="@dimen/extra_small_padding"
             android:text="@string/leave_btn"
             android:textColor="@color/leave_button_text"
-            android:textSize="12sp" />
+            android:textSize="@dimen/text_size_semi_small" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/ReportButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="@dimen/extra_small_margin"
             android:backgroundTint="@color/report_button"
-            android:padding="8dp"
+            android:padding="@dimen/extra_small_padding"
             android:text="@string/report_btn"
             android:textColor="@color/report_button_text"
-            android:textSize="12sp" />
+            android:textSize="@dimen/text_size_semi_small" />
 
     </LinearLayout>
 
@@ -59,14 +59,14 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="8dp" />
+        android:padding="@dimen/extra_small_padding" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/background"
-        android:padding="8dp"
+        android:padding="@dimen/extra_small_padding"
         android:gravity="center_vertical">
 
         <EditText
@@ -79,20 +79,20 @@
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:maxLines="3"
-            android:padding="12dp"
+            android:padding="@dimen/input_field_padding"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/input_hint"
             tools:ignore="VisualLintTextFieldSize" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/primary"
-            android:padding="12dp"
+            android:layout_marginStart="@dimen/extra_small_margin"
+            android:backgroundTint="@color/send_button"
+            android:padding="@dimen/input_field_padding"
             android:text="@string/send_btn"
-            android:textColor="@color/text_primary" />
+            android:textColor="@color/send_button_text" />
     </LinearLayout>
 
 </LinearLayout>

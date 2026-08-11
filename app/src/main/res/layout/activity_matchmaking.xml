@@ -4,24 +4,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="32dp"
+    android:padding="@dimen/large_padding"
     android:background="@color/background">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chat_logo_txt"
-        android:textSize="64sp"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="@dimen/chat_bubble_logo_text"
+        android:layout_marginBottom="@dimen/small_margin"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/random_chat_txt"
-        android:textSize="28sp"
+        android:textSize="@dimen/text_size_semiMedium"
         android:textStyle="bold"
         android:textColor="@color/text_primary"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="@dimen/extra_small_margin"/>
 
     <!-- Dynamic status message -->
     <TextView
@@ -29,19 +29,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/find_someone_txt"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_size_semi_small"
         android:textColor="@color/text_hint"
         android:gravity="center"
-        android:layout_marginBottom="48dp"/>
+        android:layout_marginBottom="@dimen/extra_large_margin"/>
 
     <!-- Loading spinner shown while searching -->
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/progressBar_width"
+        android:layout_height="@dimen/progressBar_height"
         android:visibility="gone"
         android:indeterminateTint="@color/primary"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="@dimen/medium_small_margin"/>
 
     <!-- Find chat button -->
     <Button
@@ -52,9 +52,9 @@
         android:backgroundTint="@color/primary"
         android:textColor="@color/text_primary"
         android:textStyle="bold"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="@dimen/text_size_small"
+        android:padding="@dimen/small_padding"
+        android:layout_marginBottom="@dimen/small_margin"/>
 
 
 </LinearLayout>
