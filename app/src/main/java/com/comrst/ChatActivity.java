@@ -227,6 +227,7 @@ public class ChatActivity extends AppCompatActivity {
            }
            saveReport(strangerUserId,selectedReason);
            checkAndBanUser(strangerUserId);
+           leaveChat();
         });
     }
 
@@ -238,11 +239,7 @@ public class ChatActivity extends AppCompatActivity {
         reportsRef.get().addOnSuccessListener(snapshot -> {
            long totalNum = snapshot.getChildrenCount();
            if(totalNum >= 3){
-               FirebaseDatabase.getInstance()
-                       .getReference("bannedUsers")
-                       .child(strangerUserId)
-                       .setValue(true);
-               Log.d("BAN",strangerUserId+"Banned");
+               Log.d("BAN",strangerUserId+"Should be Banned from Firebase");
            }
         });
     }

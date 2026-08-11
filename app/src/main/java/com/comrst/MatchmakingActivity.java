@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -163,6 +164,13 @@ public class MatchmakingActivity extends AppCompatActivity {
 
     // Scan the waiting room and try to match using a transaction
     private void scanAndMatch() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        Log.d("MATCHMAKING", "UID: " +
+                (user != null ? user.getUid() : "NULL"));
+
+        Log.d("MATCHMAKING", "Authenticated: " +
+                (user != null));
         waitingRoomRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -191,6 +199,10 @@ public class MatchmakingActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("MATCHMAKING", "Firebase error: "
+                        + error.getCode()
+                        + " - "
+                        + error.getMessage());
                 showError("Connection error. Try again.");
                 resetUI();
             }
@@ -302,6 +314,10 @@ public class MatchmakingActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("MATCHMAKING", "Chat listener error: "
+                        + error.getCode()
+                        + " - "
+                        + error.getMessage());
                 showError("Connection error. Try again.");
                 resetUI();
             }

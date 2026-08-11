@@ -17,7 +17,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name="com.example.comrst.LauncherActivity"
+            android:name="com.comrst.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +26,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.comrst.MatchmakingActivity"
+            android:name="com.comrst.MatchmakingActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.comrst.ChatActivity"
+            android:name="com.comrst.ChatActivity"
             android:exported="false" />
     </application>
 
