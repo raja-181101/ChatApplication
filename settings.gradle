@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Chat Application"
+rootProject.name = "COMRST"
 include ':app'
+include ':chatapplicationappium'

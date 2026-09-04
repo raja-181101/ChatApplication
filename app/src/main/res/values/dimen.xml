@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    Margins and Paddings-->
+    <dimen name="small_margin">16dp</dimen>
+    <dimen name="medium_small_margin">24dp</dimen>
+    <dimen name="extra_small_margin">8dp</dimen>
+    <dimen name="extra_large_margin">48dp</dimen>
+    <dimen name="small_padding">16dp</dimen>
+    <dimen name="large_padding">32dp</dimen>
+    <dimen name="input_field_padding">12dp</dimen>
+    <dimen name="extra_small_padding">8dp</dimen>
+<!--    logo-->
+    <dimen name="launcher_logo_width">250dp</dimen>
+    <dimen name="launcher_logo_height">250dp</dimen>
+    <dimen name="chat_bubble_logo_text">64sp</dimen>
+
+<!--    Text Size-->
+    <dimen name="launcher_appName_text_size_large">32sp</dimen>
+    <dimen name="launcher_tag_line_text_size_Medium">16sp</dimen>
+    <dimen name="text_size_semiMedium">28sp</dimen>
+    <dimen name="text_size_semi_small">14sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+
+<!--    ProgressBar-->
+    <dimen name="progressBar_width">48dp</dimen>
+    <dimen name="progressBar_height">48dp</dimen>
+</resources>

@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ChatApp</string>
+    <string name="app_name">COMRST</string>
+    <string name="chatting_with_stranger">Chatting With Stranger</string>
+    <string name="user_lost_connection">Network Lost…Waiting For Connection</string>
+    <string name="stranger_lost_connection">Stranger Lost Connection</string>
+    <string name="stop_search_btn">Stop Search</string>
+    <string name="looking_someone_txt">Looking For Someone…</string>
+    <string name="waiting_for_someone_txt">Waiting for someone to join…</string>
+    <string name="type_message_hint">Type a Message…</string>
+    <string name="find_someone_txt">Press the button to find someone to chat with!</string>
+    <string name="start_search_btn">🔍 Find Someone</string>
+    <string name="chat_logo_content_description">Chat Bubble</string>
+    <string name="me_txt">You</string>
+    <string name="u_txt">Stranger</string>
+    <string name="leave_btn">Leave</string>
+    <string name="report_btn">Report</string>
+    <string name="send_btn">Send</string>
+    <string name="logo_description">Main Logo</string>
+    <string name="random_chat_txt">@string/app_name</string>
+    <string name="tag_line">Random Chat</string>
 </resources>

@@ -1,0 +1,56 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:name="comrst_icon"
+    android:width="220dp"
+    android:height="240dp"
+    android:viewportWidth="220"
+    android:viewportHeight="240">
+
+    <!-- The hidden "C": single continuous stroked arc with rounded caps,
+         doubling as the body of a speech bubble -->
+    <path
+        android:name="c_ring"
+        android:pathData="M161.4,144.7 A62,62 0 1,1 161.4,75.3"
+        android:strokeWidth="30"
+        android:strokeLineCap="round"
+        android:strokeAlpha="1">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="220"
+                android:endY="240"
+                android:startColor="#4F46E5"
+                android:endColor="#1E5BBF" />
+        </aapt:attr>
+    </path>
+
+    <!-- Speech-bubble tail, fused into the lower-left arm of the C -->
+    <path
+        android:name="speech_tail"
+        android:pathData="M101,174.4 Q85,193 70,204 Q72,188 75.6,165.1 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="220"
+                android:endY="240"
+                android:startColor="#4F46E5"
+                android:endColor="#1E5BBF" />
+        </aapt:attr>
+    </path>
+
+    <!-- Two dots inside the opening: two strangers, one conversation -->
+    <path
+        android:name="dot_primary"
+        android:pathData="M133,110 A15,15 0 1,0 163,110 A15,15 0 1,0 133,110 Z"
+        android:fillColor="@color/logo_dot_primary" />
+
+    <path
+        android:name="dot_accent"
+        android:pathData="M172,110 A10,10 0 1,0 192,110 A10,10 0 1,0 172,110 Z"
+        android:fillColor="@color/logo_dot_secondary" />
+
+</vector>

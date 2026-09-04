@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.example.comrst;
 
 // Simple model class to represent one chat message
 public class Message {

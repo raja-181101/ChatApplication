@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "1098119022488",
+    "firebase_url": "https://chat-application-8367d-default-rtdb.firebaseio.com",
     "project_id": "chat-application-8367d",
     "storage_bucket": "chat-application-8367d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1098119022488:android:fe7cd4718dd888950fcded",
+        "mobilesdk_app_id": "1:1098119022488:android:3d2425eb95d179660fcded",
         "android_client_info": {
-          "package_name": "com.example.chatapplication"
+          "package_name": "com.comrst"
         }
       },
       "oauth_client": [],

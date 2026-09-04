@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for messages sent by the current user (right-aligned, blue) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -14,14 +15,15 @@
         android:background="@drawable/bubble_sent"
         android:padding="10dp"
         android:layout_marginStart="64dp"
-        android:maxWidth="260dp">
+        android:maxWidth="260dp"
+        tools:ignore="UselessParent">
 
         <!-- Message text -->
         <TextView
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/message_sent_text"
             android:textSize="15sp"/>
 
         <!-- "You" label -->
@@ -29,11 +31,11 @@
             android:id="@+id/senderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You"
-            android:textColor="#CCE5FF"
-            android:textSize="11sp"
             android:layout_gravity="end"
-            android:layout_marginTop="2dp"/>
+            android:layout_marginTop="2dp"
+            android:text="@string/me_txt"
+            android:textColor="@color/text_hint"
+            android:textSize="11sp" />
     </LinearLayout>
 
 </LinearLayout>
